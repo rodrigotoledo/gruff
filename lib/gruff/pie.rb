@@ -25,11 +25,14 @@ class Gruff::Pie < Gruff::Base
   # Defaults to 0.15
   attr_accessor :text_offset_percentage
 
+  attr_accessor :show_label_in_values
+
   def initialize_ivars
     super
     @zero_degree = 0.0
     @hide_labels_less_than = 0.0
     @text_offset_percentage = DEFAULT_TEXT_OFFSET_PERCENTAGE
+    @show_label_in_values = false
   end
 
   def draw
@@ -67,8 +70,9 @@ class Gruff::Pie < Gruff::Base
 
         label_val = ((data_row[DATA_VALUES_INDEX].first / total_sum) * 100.0).round
         unless label_val < @hide_labels_less_than
+          sufix_value = @show_label_in_values ? (' - '+data_row[DATA_LABEL_INDEX].to_s) : ''
           # RMagick must use sprintf with the string and % has special significance.
-          label_string = label_val.to_s + '% ('+ data_row[DATA_VALUES_INDEX].first.to_s + ')'
+          label_string = label_val.to_s + '% ('+ data_row[DATA_VALUES_INDEX].first.to_s + ')' + sufix_value
           @d = draw_label(center_x,center_y, half_angle,
                           radius + (radius * @text_offset_percentage),
                           label_string)
